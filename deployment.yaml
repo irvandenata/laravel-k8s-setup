@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-service
+spec:
+  selector:
+    matchLabels:
+      name: test-service
+  template:
+    metadata:
+      name : test-service
+      labels:
+        name: test-service
+    spec:
+      volumes:
+        - name: local-files
+          hostPath:
+            path: /var/www/html
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-persistentvolumeclaim
+      containers:
+        - name: test-service
+          image: irvandenata/laravel-php-8.2
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /app
+              name: local-files
+        - name: mysql
+          image: mysql
+          args:
+            - "--default-authentication-plugin=mysql_native_password" #plugin added on 8.0 version
+          env:
+           - name: MYSQL_DATABASE
+             value: "root"
+           - name: MYSQL_ROOT_PASSWORD
+             value: "password"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-storage
+
+
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-persistentvolumeclaim
+  labels:
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-service
+spec:
+  type: NodePort
+  selector:
+    name: test-service
+  ports:
+    - port: 8080
+      targetPort: 80
+      name: app-service
+      nodePort: 30099
+    - port: 3306
+      targetPort: 3306
+      name: mysql-service
+      nodePort: 30090
+
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: laravel-config
+#   labels:
+#     name: laravel-config
+# data:
+#   APP_ENV: "local"
+#   APP_DEBUG: "true"
+#   APP_LOG: "errorlog"
+#   APP_LOG_LEVEL: "debug"
+#   APP_URL: "http://localhost"
+#   APP_KEY: YmFzZTY0OnhwVDVZWkdtZWZ1TXFqVmlIODVxTE15cGxNR244WXhoQkVGcGMrVElKbTQ9
+
+#   MYSQL_PORT: "3306"
+#   MYSQL_HOST: "http://198.19.249.2:30090"
+#   MYSQL_DATABASE: "Mantap"
+#   MYSQL_USER: "root"
+#   MYSQL_ROOT_PASSWORD: "password"
+
+#   BROADCAST_DRIVER: "log"
+#   CACHE_DRIVER: "file"
+#   SESSION_DRIVER: "file"
+#   QUEUE_DRIVER: "sync"
+
+#   REDIS_HOST: "test-service-redis"
+#   REDIS_PORT: "6379"

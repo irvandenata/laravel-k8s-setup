@@ -1,0 +1,20 @@
+services:
+    test-service:
+        build: .
+        container_name: test-service
+        image: irvandenata/laravel-fpm-8.2
+        working_dir: /var/www/html
+        # volumes:
+        # - .:/var/www/app
+        # networks:
+        #     simanis-network:
+        #         ipv4_address: 10.5. 0.2
+        ports:
+            - "9000:9000"
+# networks:
+#   simanis-network:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 10.5.0.0/16
+#         - gateway: 10.5.0.1

@@ -14,7 +14,7 @@ spec:
     spec:
       volumes:
         - name: local-files
-          emptyPath: {}
+          emptyDir: {}
         - name: mysql-storage
           persistentVolumeClaim:
             claimName: mysql-persistentvolumeclaim

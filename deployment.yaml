@@ -20,7 +20,7 @@ spec:
         #     claimName: mysql-persistentvolumeclaim
       containers:
         - name: test-service
-          image: irvandenata/laravel-php-8.2
+          image: nginx
           ports:
             - containerPort: 80
           volumeMounts:

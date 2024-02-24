@@ -14,8 +14,7 @@ spec:
     spec:
       volumes:
         - name: local-files
-          hostPath:
-            path: /var/www/html
+          emptyPath: {}
         - name: mysql-storage
           persistentVolumeClaim:
             claimName: mysql-persistentvolumeclaim

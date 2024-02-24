@@ -20,7 +20,7 @@ spec:
         #     claimName: mysql-persistentvolumeclaim
       containers:
         - name: test-service
-          image: asia-docker.pkg.dev/buoyant-planet-415209/laravel-repo/laravel-php.8.2
+          image: irvandenata/laravel-php-8.2
           ports:
             - containerPort: 80
           volumeMounts:

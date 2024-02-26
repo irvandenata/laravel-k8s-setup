@@ -1,47 +1,51 @@
-FROM php:8.2-fpm
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    libzip-dev \
-    curl \
-    bash \
-    libpq-dev \
-    libonig-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+FROM php:8.2-fpm-alpine AS base
+ENV EXT_APCU_VERSION=master
+RUN curl -vvv https://github.com/krakjoe/apcu.git
 
+RUN apk add --update zlib-dev libpng-dev libzip-dev $PHPIZE_DEPS
 
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-
-# Install extensions
-# RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-# RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
-# RUN docker-php-ext-configure gd --with-jpeg-=/usr/include/ --with-freetype=/usr/include/
+RUN docker-php-ext-install exif
 RUN docker-php-ext-install gd
-# Disable for development purposes
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install pdo_mysql
+# RUN pecl install apcu
+RUN docker-php-source extract \
+    && apk -Uu add git \
+    && git clone --branch $EXT_APCU_VERSION --depth 1 https://github.com/krakjoe/apcu.git /usr/src/php/ext/apcu \
+    && cd /usr/src/php/ext/apcu && git submodule update --init \
+    && docker-php-ext-install apcu
+RUN docker-php-ext-enable apcu
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+FROM base AS dev
 
-COPY  / /var/www/html
+COPY /composer.json composer.json
+COPY /composer.lock composer.lock
+COPY /app app
+COPY /bootstrap bootstrap
+COPY /config config
+COPY /artisan artisan
 
-# Set working directory
+FROM base AS build-fpm
+
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
-#COPY . /var/www
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY /artisan artisan
+COPY . /var/www/html
+# COPY /composer.json composer.json
+# RUN composer dump-autoload -o
+RUN composer clearcache
+RUN composer update --prefer-dist --no-ansi --no-dev
 
-# Copy existing application directory permissions
-#COPY --chown=www:www . /var/www
+COPY /bootstrap bootstrap
+COPY /app app
+COPY /config config
+COPY /routes routes
+
+
+# COPY . /var/www/html
+
+
+FROM build-fpm AS fpm
+
+COPY --from=build-fpm /var/www/html /var/www/html

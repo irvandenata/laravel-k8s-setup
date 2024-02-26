@@ -72,6 +72,7 @@ spec:
       port: 8080
       targetPort: 80
       name: app-service
+
     # - port: 3306
     #   targetPort: 3306
     #   name: mysql-service

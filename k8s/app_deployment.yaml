@@ -41,7 +41,7 @@ spec:
       containers:
         - name: nginx
           imagePullPolicy: IfNotPresent
-          image: frontend
+          image: irvandenata/nginx
           resources: {}
             # limits:
             #   cpu: 500m

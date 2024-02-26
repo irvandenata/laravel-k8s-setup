@@ -23,21 +23,21 @@ spec:
           emptyDir: {}
       securityContext:
         fsGroup: 82
-      initContainers:
-        - name: database-migrations
-          image: irvandenata/nginx
-          imagePullPolicy: IfNotPresent
-          envFrom:
-            - configMapRef:
-                name: application-config
-            - secretRef:
-                name: application-secret
-          command:
-            - "php"
-          args:
-            - "artisan"
-            - "migrate"
-            - "--force"
+      # initContainers:
+      #   - name: database-migrations
+      #     image: irvandenata/nginx
+      #     imagePullPolicy: IfNotPresent
+      #     envFrom:
+      #       - configMapRef:
+      #           name: application-config
+      #       - secretRef:
+      #           name: application-secret
+      #     command:
+      #       - "php"
+      #     args:
+      #       - "artisan"
+      #       - "migrate"
+      #       - "--force"
       containers:
         - name: nginx
           imagePullPolicy: IfNotPresent

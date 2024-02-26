@@ -5,7 +5,7 @@ metadata:
     app: web-application-svc
   name: web-application-svc
 spec:
-  type: LoadBalencer
+  type: LoadBalancer
   selector:
     app: web-application
   ports:

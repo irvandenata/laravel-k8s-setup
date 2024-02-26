@@ -35,13 +35,14 @@ COPY . /var/www/html
 # COPY /composer.json composer.json
 # RUN composer dump-autoload -o
 RUN composer clearcache
-RUN composer update --prefer-dist --no-ansi --no-dev
-
+RUN composer dump-autoload
+RUN composer update
+RUN chmod +x artisan
+RUN chmod o+w storage/ -R
 COPY /bootstrap bootstrap
 COPY /app app
 COPY /config config
 COPY /routes routes
-
 
 # COPY . /var/www/html
 

@@ -55,14 +55,6 @@ spec:
                 name: application-config
             - secretRef:
                 name: application-secret
-          securityContext:
-            runAsUser: 82
-            readOnlyRootFilesystem: true
-          volumeMounts:
-            - name: logs
-              mountPath: /var/www/html/storage/logs
-            - name: views
-              mountPath: /var/www/html/storage/framework/views
           resources: {}
           image: irvandenata/php-fpm-8.2
           ports:

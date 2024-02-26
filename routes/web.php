@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-    return response()->json([
-        'message' => 'Welcome to the API'
-    ]);
+    return view('welcome');
+});
+
+Route::get('/clear-cache', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    return "Cache is cleared";
 });

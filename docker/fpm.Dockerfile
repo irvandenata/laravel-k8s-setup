@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine AS base
+FROM php:8.2-fpm AS base
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \

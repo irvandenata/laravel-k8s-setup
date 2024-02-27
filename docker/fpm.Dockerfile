@@ -1,20 +1,25 @@
 FROM php:8.2-fpm-alpine AS base
-ENV EXT_APCU_VERSION=master
-RUN curl -vvv https://github.com/krakjoe/apcu.git
-
-RUN apk add --update zlib-dev libpng-dev libzip-dev $PHPIZE_DEPS
-
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    libzip-dev \
+    curl \
+    bash \
+    libpq-dev \
+    libonig-dev
 RUN docker-php-ext-install exif
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
-# RUN pecl install apcu
-RUN docker-php-source extract \
-    && apk -Uu add git \
-    && git clone --branch $EXT_APCU_VERSION --depth 1 https://github.com/krakjoe/apcu.git /usr/src/php/ext/apcu \
-    && cd /usr/src/php/ext/apcu && git submodule update --init \
-    && docker-php-ext-install apcu
-RUN docker-php-ext-enable apcu
 
 FROM base AS dev
 

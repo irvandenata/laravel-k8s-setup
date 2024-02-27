@@ -41,7 +41,7 @@ spec:
       containers:
         - name: nginx
           imagePullPolicy: Always
-          image: docker.io/irvandenata/nginx
+          image: irvandenata/nginx-new
           resources: {}
             # limits:
             #   cpu: 500m
@@ -56,6 +56,6 @@ spec:
             - secretRef:
                 name: application-secret
           resources: {}
-          image: docker.io/irvandenata/php-fpm-8.2
+          image: irvandenata/php-fpm
           ports:
             - containerPort: 9000

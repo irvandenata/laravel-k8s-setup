@@ -1,1 +1,8 @@
 http://198.19.249.2
+BUILD
+docker buildx build --platform linux/amd64 \
+    -t irvandenata/php-fpm \
+    -f docker/fpm.Dockerfile \
+    --push \
+    --no-cache \
+.

@@ -2,15 +2,59 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: web-application-svc
-  name: web-application-svc
+    app: pegawai-svc
+  name: pegawai-svc
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
-    app: web-application
+    app: pegawai-service
   ports:
   - name: targetport
     port: 80
     protocol: TCP
     targetPort: 80
-    nodePort: 30007
+    # nodePort: 30010
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dossier-svc
+  name: dossier-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: dossier-service
+  ports:
+  - name: targetport
+    port: 80
+    protocol: TCP
+    targetPort: 80
+    # nodePort: 30010
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: laravel-in-kubernetes-webserver
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /makan
+        pathType: Prefix
+        backend:
+          service:
+            name: pegawai-svc
+            port:
+              number: 80
+      - path: /minum
+        pathType: Prefix
+        backend:
+          service:
+            name: dossier-svc
+            port:
+              number: 80

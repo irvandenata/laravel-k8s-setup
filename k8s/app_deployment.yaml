@@ -1,16 +1,81 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-application
+  name: pegawai-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web-application
+      app: pegawai-service
   template:
     metadata:
       labels:
-        app: web-application
+        app: pegawai-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "80"
+    spec:
+      volumes:
+        - name: logs
+          emptyDir: {}
+        - name: views
+          emptyDir: {}
+      securityContext:
+        fsGroup: 82
+      # initContainers:
+      #   - name: database-migrations
+      #     image: irvandenata/nginx
+      #     imagePullPolicy: Always
+      #     envFrom:
+      #       - configMapRef:
+      #           name: application-config
+      #       - secretRef:
+      #           name: application-secret
+      #     command:
+      #       - "php"
+      #     args:
+      #       - "artisan"
+      #       - "migrate"
+      #       - "--force"
+      containers:
+        - name: nginx
+          imagePullPolicy: Always
+          image: irvandenata/nginx-new
+          resources: {}
+            # limits:
+            #   cpu: 500m
+            #   memory: 50M
+          ports:
+            - containerPort: 80
+        - name: fpm
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: application-config
+            - secretRef:
+                name: application-secret
+          resources: {}
+          image: irvandenata/php-fpm
+          ports:
+            - containerPort: 9000
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dossier-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dossier-service
+  template:
+    metadata:
+      labels:
+        app: dossier-service
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics

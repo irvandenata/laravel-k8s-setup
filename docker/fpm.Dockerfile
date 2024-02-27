@@ -39,9 +39,9 @@ COPY /artisan artisan
 COPY . /var/www/html
 # COPY /composer.json composer.json
 # RUN composer dump-autoload -o
-RUN composer clearcache
-RUN composer dump-autoload
-RUN composer update
+# RUN composer clearcache
+# RUN composer dump-autoload
+RUN composer update --no-interaction --no-dev --no-scripts
 RUN chmod +x artisan
 RUN chmod o+w storage/ -R
 COPY /bootstrap bootstrap

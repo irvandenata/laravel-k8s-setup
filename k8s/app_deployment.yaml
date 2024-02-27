@@ -41,7 +41,7 @@ spec:
       containers:
         - name: nginx
           imagePullPolicy: Always
-          image: nginx
+          image: irvandenata/nginx
           resources: {}
             # limits:
             #   cpu: 500m
@@ -50,11 +50,11 @@ spec:
             - containerPort: 80
         - name: fpm
           imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: application-config
-            - secretRef:
-                name: application-secret
+          # envFrom:
+          #   - configMapRef:
+          #       name: application-config
+          #   - secretRef:
+          #       name: application-secret
           resources: {}
           image: irvandenata/php-fpm-8.2
           ports:

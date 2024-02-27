@@ -41,7 +41,7 @@ spec:
       containers:
         - name: nginx
           imagePullPolicy: Always
-          image: irvandenata/nginx
+          image: nginx
           resources: {}
             # limits:
             #   cpu: 500m

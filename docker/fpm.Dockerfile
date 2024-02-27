@@ -1,25 +1,20 @@
-FROM php:8.2-fpm AS base
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    libzip-dev \
-    curl \
-    bash \
-    libpq-dev \
-    libonig-dev
+FROM php:8.2-fpm-alpine AS base
+ENV EXT_APCU_VERSION=master
+RUN curl -vvv https://github.com/krakjoe/apcu.git
+
+RUN apk add --update zlib-dev libpng-dev libzip-dev $PHPIZE_DEPS
+
 RUN docker-php-ext-install exif
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql
+# RUN pecl install apcu
+RUN docker-php-source extract \
+    && apk -Uu add git \
+    && git clone --branch $EXT_APCU_VERSION --depth 1 https://github.com/krakjoe/apcu.git /usr/src/php/ext/apcu \
+    && cd /usr/src/php/ext/apcu && git submodule update --init \
+    && docker-php-ext-install apcu
+RUN docker-php-ext-enable apcu
 
 FROM base AS dev
 
@@ -39,11 +34,17 @@ COPY /artisan artisan
 COPY . /var/www/html
 # COPY /composer.json composer.json
 # RUN composer dump-autoload -o
-# RUN composer clearcache
-# RUN composer dump-autoload
-RUN composer update --no-interaction --no-dev --no-scripts
+RUN composer clearcache --ansi
+# RUN composer dump-autoload --ansi
+RUN composer update --ansi
 RUN chmod +x artisan
 RUN chmod o+w storage/ -R
+RUN php artisan package:discover --ansi
+RUN php artisan view:cache --ansi
+RUN php artisan config:cache --ansi
+RUN php artisan route:cache --ansi
+RUN php artisan cache:clear --ansi
+
 COPY /bootstrap bootstrap
 COPY /app app
 COPY /config config

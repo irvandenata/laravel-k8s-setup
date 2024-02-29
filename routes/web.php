@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'message' => 'Welcome to the API',
+        'dossier' => env('PEGAWAI_SVC_PORT_80_TCP'),
+    ]);
 });
 
 Route::get('/clear-cache', function() {

@@ -56,7 +56,7 @@ spec:
             - secretRef:
                 name: application-secret
           resources: {}
-          image: irvandenata/php-fpm
+          image: irvandenata/pegawai-service
           ports:
             - containerPort: 9000
 
@@ -122,7 +122,13 @@ spec:
                 name: application-config
             - secretRef:
                 name: application-secret
+          env:
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                    fieldPath: status.hostIP
+            - name: PEGAWAI_SERVICE
           resources: {}
-          image: irvandenata/php-fpm
+          image: irvandenata/dossier-service
           ports:
             - containerPort: 9000

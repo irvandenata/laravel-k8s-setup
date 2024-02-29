@@ -97,10 +97,14 @@ spec:
       #           name: application-secret
       #     command:
       #       - "php"
+
       #     args:
       #       - "artisan"
       #       - "migrate"
       #       - "--force"
+
+
+
       containers:
         - name: nginx
           imagePullPolicy: Always

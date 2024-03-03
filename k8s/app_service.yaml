@@ -52,6 +52,8 @@ spec:
             port:
               number: 80
       - path: /test
+
+
         pathType: Prefix
         backend:
           service:

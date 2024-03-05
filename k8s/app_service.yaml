@@ -51,7 +51,7 @@ spec:
             name: pegawai-svc
             port:
               number: 80
-      - path: /masuk
+      - path: /part-2
         pathType: Prefix
         backend:
           service:
